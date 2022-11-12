@@ -5,6 +5,10 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.domain.ExampleMatcher.StringMatcher;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
@@ -80,4 +84,19 @@ public class PerfilService {
 	public Perfil buscarPerfilPeloId(Long id) {
 		return this.repository.findById(id).orElseThrow(() -> new ObjetoNotFoundException("Perfil não encontrado."));
 	}
+
+	public List<PerfilResponseDTO> filtroPerfil(PerfilRequestDTO perfilRequestDTO, PageRequest pageRequest) {
+
+		Perfil perfil = this.modelMapper.map(perfilRequestDTO, Perfil.class);
+
+		ExampleMatcher exampleMatcher = ExampleMatcher.matching().withIgnoreCase()
+				.withStringMatcher(StringMatcher.CONTAINING);
+		Example<Perfil> example = Example.of(perfil, exampleMatcher);
+
+		Page<Perfil> perfils = this.repository.findAll(example, pageRequest);
+		return perfils.stream().map(p -> {
+			return this.modelMapper.map(p, PerfilResponseDTO.class);
+		}).collect(Collectors.toList());
+	}
+
 }
