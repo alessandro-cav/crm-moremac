@@ -12,7 +12,7 @@ public class JWTConstants {
 
 	public static final int TOKEN_EXPIRADO_ESQUECI_SENHA = 1800000;
 
-	public static final String LINK_TOKEN_RESETAR_SENHA = "http://localhost:8080/cvv-back/users/reset_password?token=";
+	public static final String LINK_TOKEN_RESETAR_SENHA = "http://localhost:8080/crm-moremac/users/reset_password?token=";
 
 	public static final String JWT = "JWT";
 
@@ -20,7 +20,7 @@ public class JWTConstants {
 
 	public static final String HEADER = "header";
 	
-	public static final String DIRETORIO = "br.com.cvv.back.";
+	public static final String DIRETORIO = "br.com.crm.moremac.";
 	
 	public static final String GLOBAL = "global" ; 
 	
@@ -30,7 +30,7 @@ public class JWTConstants {
 	
 	public static final String BEARER_AUTHENTICATION = "Bearer Authentication";
 	
-	public static final String TITULO = "Venda de veiculos API REST";
+	public static final String TITULO = "Gerenciamento API REST";
 	
 	public static final String VERSAO = "1.0.0";
 
