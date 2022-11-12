@@ -63,9 +63,9 @@ public class PerfilController {
 	}
 
 	@PostMapping("/filtro")
-	public ResponseEntity<List<PerfilResponseDTO>> filtroPerfil(@RequestBody FiltroPerfilRequestDTO filtroPerfilRequestDTO,
-			@RequestParam Integer pagina, @RequestParam Integer quantidade, @RequestParam String ordem,
-			@RequestParam String ordenarPor) {
+	public ResponseEntity<List<PerfilResponseDTO>> filtroPerfil(
+			@RequestBody FiltroPerfilRequestDTO filtroPerfilRequestDTO, @RequestParam Integer pagina,
+			@RequestParam Integer quantidade, @RequestParam String ordem, @RequestParam String ordenarPor) {
 		return ResponseEntity.ok(this.service.filtroPerfil(filtroPerfilRequestDTO,
 				PageRequest.of(pagina, quantidade, Sort.by(Direction.valueOf(ordem), ordenarPor))));
 	}

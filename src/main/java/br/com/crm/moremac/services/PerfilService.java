@@ -86,7 +86,8 @@ public class PerfilService {
 		return this.repository.findById(id).orElseThrow(() -> new ObjetoNotFoundException("Perfil não encontrado."));
 	}
 
-	public List<PerfilResponseDTO> filtroPerfil(FiltroPerfilRequestDTO filtroPerfilRequestDTO, PageRequest pageRequest) {
+	public List<PerfilResponseDTO> filtroPerfil(FiltroPerfilRequestDTO filtroPerfilRequestDTO,
+			PageRequest pageRequest) {
 
 		Perfil perfil = this.modelMapper.map(filtroPerfilRequestDTO, Perfil.class);
 
