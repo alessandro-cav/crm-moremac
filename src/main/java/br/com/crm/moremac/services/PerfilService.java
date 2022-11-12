@@ -6,16 +6,13 @@ import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
-import br.com.crm.moremac.config.autentication.AutenticacaoConfig;
 import br.com.crm.moremac.entities.Perfil;
 import br.com.crm.moremac.handlers.BadRequestException;
 import br.com.crm.moremac.handlers.ObjetoNotFoundException;
 import br.com.crm.moremac.repositories.PerfilRepository;
 import br.com.crm.moremac.requests.PerfilRequestDTO;
-import br.com.crm.moremac.responses.AutenticacaoResponseDTO;
 import br.com.crm.moremac.responses.PerfilResponseDTO;
 
 @Service
@@ -25,12 +22,9 @@ public class PerfilService {
 
 	private final ModelMapper modelMapper;
 
-	private final AutenticacaoConfig autenticacaoConfig;
-
-	public PerfilService(PerfilRepository repository, ModelMapper modelMapper, AutenticacaoConfig autenticacaoConfig) {
+	public PerfilService(PerfilRepository repository, ModelMapper modelMapper) {
 		this.repository = repository;
 		this.modelMapper = modelMapper;
-		this.autenticacaoConfig = autenticacaoConfig;
 	}
 
 	public PerfilResponseDTO salvar(PerfilRequestDTO perfilRequestDTO) {
@@ -43,19 +37,10 @@ public class PerfilService {
 		return this.modelMapper.map(perfil, PerfilResponseDTO.class);
 	}
 
-	public List<PerfilResponseDTO> buscarTodos(Authentication authentication, PageRequest pageRequest) {
-		List<PerfilResponseDTO> perfilResponseDTOs;
-		AutenticacaoResponseDTO autenticacaoDTO = this.autenticacaoConfig.gerarAutenticacaoDTO(authentication);
-		if (autenticacaoDTO.getCnpj() != null) {
-			perfilResponseDTOs = this.repository.findByCnpj(autenticacaoDTO.getCnpj(), pageRequest).stream()
-					.map(perfil -> {
-						return this.modelMapper.map(perfil, PerfilResponseDTO.class);
-					}).collect(Collectors.toList());
-		} else {
-			perfilResponseDTOs = this.repository.findAll(pageRequest).stream().map(perfil -> {
-				return this.modelMapper.map(perfil, PerfilResponseDTO.class);
-			}).collect(Collectors.toList());
-		}
+	public List<PerfilResponseDTO> buscarTodos(PageRequest pageRequest) {
+		List<PerfilResponseDTO> perfilResponseDTOs = this.repository.findAll(pageRequest).stream().map(perfil -> {
+			return this.modelMapper.map(perfil, PerfilResponseDTO.class);
+		}).collect(Collectors.toList());
 		return perfilResponseDTOs;
 	}
 
@@ -84,11 +69,9 @@ public class PerfilService {
 				this.repository.findByNome(perfilRequestDTO.getNome()).ifPresent(p -> {
 					throw new BadRequestException("Perfil já cadastrado.");
 				});
-
 				perfilRequestDTO.setId(perfil.getId());
 				perfil = this.modelMapper.map(perfilRequestDTO, Perfil.class);
 				perfil = this.repository.save(perfil);
-
 			}
 			return this.modelMapper.map(perfil, PerfilResponseDTO.class);
 		}).orElseThrow(() -> new ObjetoNotFoundException("Perfil não encontrado."));
@@ -96,22 +79,5 @@ public class PerfilService {
 
 	public Perfil buscarPerfilPeloId(Long id) {
 		return this.repository.findById(id).orElseThrow(() -> new ObjetoNotFoundException("Perfil não encontrado."));
-	}
-
-	public List<PerfilResponseDTO> filtrarPerfilPeloNome(Authentication authentication, String nome) {
-		List<PerfilResponseDTO> perfilResponseDTOs;
-		AutenticacaoResponseDTO autenticacaoDTO = this.autenticacaoConfig.gerarAutenticacaoDTO(authentication);
-
-		if (autenticacaoDTO.getCnpj() != null) {
-			perfilResponseDTOs = this.repository.findByCnpjAndNomeLike(autenticacaoDTO.getCnpj(), nome).stream()
-					.map(perfil -> {
-						return this.modelMapper.map(perfil, PerfilResponseDTO.class);
-					}).collect(Collectors.toList());
-		} else {
-			perfilResponseDTOs = this.repository.findByNomeLike(nome).stream().map(perfil -> {
-				return this.modelMapper.map(perfil, PerfilResponseDTO.class);
-			}).collect(Collectors.toList());
-		}
-		return perfilResponseDTOs;
 	}
 }

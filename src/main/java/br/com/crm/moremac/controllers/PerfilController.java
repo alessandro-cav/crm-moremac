@@ -8,8 +8,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -41,10 +39,9 @@ public class PerfilController {
 
 	@GetMapping
 	public ResponseEntity<List<PerfilResponseDTO>> buscarTodos(@RequestParam Integer pagina,
-			@RequestParam Integer quantidade, @RequestParam String ordem, @RequestParam String ordenarPor,
-			@CurrentSecurityContext(expression = "authentication") Authentication authentication) {
-		return ResponseEntity.ok(this.service.buscarTodos(authentication,
-				PageRequest.of(pagina, quantidade, Sort.by(Direction.valueOf(ordem), ordenarPor))));
+			@RequestParam Integer quantidade, @RequestParam String ordem, @RequestParam String ordenarPor) {
+		return ResponseEntity.ok(this.service
+				.buscarTodos(PageRequest.of(pagina, quantidade, Sort.by(Direction.valueOf(ordem), ordenarPor))));
 	}
 
 	@DeleteMapping("/{id}")
@@ -63,12 +60,4 @@ public class PerfilController {
 			@Valid @RequestBody PerfilRequestDTO perfilRequestDTO) {
 		return ResponseEntity.ok(this.service.atualizar(id, perfilRequestDTO));
 	}
-
-	@GetMapping("/filtro")
-	public ResponseEntity<List<PerfilResponseDTO>> filtrarPerfilPeloNome(
-			@CurrentSecurityContext(expression = "authentication") Authentication authentication,
-			@RequestParam String nome) {
-		return ResponseEntity.ok(this.service.filtrarPerfilPeloNome(authentication, nome));
-	}
-
 }
