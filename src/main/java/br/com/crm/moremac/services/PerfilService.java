@@ -16,6 +16,7 @@ import br.com.crm.moremac.entities.Perfil;
 import br.com.crm.moremac.handlers.BadRequestException;
 import br.com.crm.moremac.handlers.ObjetoNotFoundException;
 import br.com.crm.moremac.repositories.PerfilRepository;
+import br.com.crm.moremac.requests.FiltroPerfilRequestDTO;
 import br.com.crm.moremac.requests.PerfilRequestDTO;
 import br.com.crm.moremac.responses.PerfilResponseDTO;
 
@@ -85,9 +86,9 @@ public class PerfilService {
 		return this.repository.findById(id).orElseThrow(() -> new ObjetoNotFoundException("Perfil não encontrado."));
 	}
 
-	public List<PerfilResponseDTO> filtroPerfil(PerfilRequestDTO perfilRequestDTO, PageRequest pageRequest) {
+	public List<PerfilResponseDTO> filtroPerfil(FiltroPerfilRequestDTO filtroPerfilRequestDTO, PageRequest pageRequest) {
 
-		Perfil perfil = this.modelMapper.map(perfilRequestDTO, Perfil.class);
+		Perfil perfil = this.modelMapper.map(filtroPerfilRequestDTO, Perfil.class);
 
 		ExampleMatcher exampleMatcher = ExampleMatcher.matching().withIgnoreCase()
 				.withStringMatcher(StringMatcher.CONTAINING);
@@ -98,5 +99,4 @@ public class PerfilService {
 			return this.modelMapper.map(p, PerfilResponseDTO.class);
 		}).collect(Collectors.toList());
 	}
-
 }
