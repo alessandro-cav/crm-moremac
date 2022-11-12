@@ -34,9 +34,6 @@ public class Perfil implements Serializable {
 	@Column(name = "NOME")
 	private String nome;
 
-	@Column(name = "CNPJ")
-	private String cnpj;
-
 	@CreationTimestamp
 	@Column(name = "DT_CRIACAO")
 	private LocalDateTime dataCriacao;
@@ -69,14 +66,6 @@ public class Perfil implements Serializable {
 		this.nome = nome;
 	}
 
-	public String getCnpj() {
-		return cnpj;
-	}
-
-	public void setCnpj(String cnpj) {
-		this.cnpj = cnpj;
-	}
-
 	public LocalDateTime getDataCriacao() {
 		return dataCriacao;
 	}
@@ -92,5 +81,4 @@ public class Perfil implements Serializable {
 	public void setDataAtualizacao(LocalDateTime dataAtualizacao) {
 		this.dataAtualizacao = dataAtualizacao;
 	}
-
 }

@@ -46,9 +46,6 @@ public class Usuario implements Serializable {
 	@Enumerated(EnumType.STRING)
 	private Status status;
 
-	@Column(name = "CNPJ")
-	private String cnpj;
-
 	@CreationTimestamp
 	@Column(name = "DT_CRIACAO")
 	private LocalDateTime dataCriacao;
@@ -97,14 +94,6 @@ public class Usuario implements Serializable {
 		this.status = status;
 	}
 
-	public String getCnpj() {
-		return cnpj;
-	}
-
-	public void setCnpj(String cnpj) {
-		this.cnpj = cnpj;
-	}
-
 	public LocalDateTime getDataCriacao() {
 		return dataCriacao;
 	}
@@ -120,5 +109,4 @@ public class Usuario implements Serializable {
 	public void setDataAtualizacao(LocalDateTime dataAtualizacao) {
 		this.dataAtualizacao = dataAtualizacao;
 	}
-
 }
