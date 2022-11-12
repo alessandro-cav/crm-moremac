@@ -1,4 +1,12 @@
 
+CREATE SEQUENCE IF NOT EXISTS sq_perfil
+INCREMENT 1
+START 1;
+
+CREATE SEQUENCE IF NOT EXISTS sq_usuario
+INCREMENT 1
+START 1;
+
 INSERT INTO tbl_perfil (id_perfil,nome, dt_criacao)
   SELECT nextval('sq_perfil') ,'admin',now()
     WHERE NOT EXISTS (SELECT nome FROM tbl_perfil WHERE id_perfil = 1);
