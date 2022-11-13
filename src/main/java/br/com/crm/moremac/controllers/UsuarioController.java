@@ -18,12 +18,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.crm.moremac.requests.FiltroPerfilRequestDTO;
 import br.com.crm.moremac.requests.LoginRequestDTO;
 import br.com.crm.moremac.requests.SenhasRequestDTO;
 import br.com.crm.moremac.requests.UsuarioRequestDTO;
 import br.com.crm.moremac.responses.MensagemResponseDTO;
-import br.com.crm.moremac.responses.PerfilResponseDTO;
 import br.com.crm.moremac.responses.UsuarioResponseDTO;
 import br.com.crm.moremac.services.UsuarioService;
 

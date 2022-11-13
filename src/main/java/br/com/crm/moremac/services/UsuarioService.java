@@ -8,9 +8,9 @@ import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.domain.ExampleMatcher.StringMatcher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.ExampleMatcher.StringMatcher;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -35,7 +35,6 @@ import br.com.crm.moremac.requests.LoginRequestDTO;
 import br.com.crm.moremac.requests.SenhasRequestDTO;
 import br.com.crm.moremac.requests.UsuarioRequestDTO;
 import br.com.crm.moremac.responses.MensagemResponseDTO;
-import br.com.crm.moremac.responses.PerfilResponseDTO;
 import br.com.crm.moremac.responses.UsuarioResponseDTO;
 
 @Service
