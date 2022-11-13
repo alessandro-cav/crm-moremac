@@ -44,23 +44,6 @@ public class JWTValidarFilter extends BasicAuthenticationFilter {
 
 		UsernamePasswordAuthenticationToken authenticationToken = getAuthenticationToken(token);
 
-		String login = JWT.decode(token).getSubject();
-		Usuario usuario = this.service.buscarUsuarioPeloLogin(login);
-
-
-		AutenticacaoResponseDTO autenticacaoDTO = new AutenticacaoResponseDTO();
-
-		autenticacaoDTO.setIdUsuario(usuario.getId());
-		autenticacaoDTO.setLogin(usuario.getLogin());
-		autenticacaoDTO.setStatus(usuario.getStatus());
-
-		autenticacaoDTO.setIdPerfil(usuario.getPerfil().getId());
-		autenticacaoDTO.setNomePerfil(usuario.getPerfil().getNome());
-
-		autenticacaoDTO.setToken(token);
-
-		authenticationToken.setDetails(autenticacaoDTO);
-
 		SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 		chain.doFilter(request, response);
 	}
