@@ -181,8 +181,8 @@ public class UsuarioService implements UserDetailsService {
 		return this.repository.findById(idUsuario)
 				.orElseThrow(() -> new ObjetoNotFoundException("Usuário não encontrado."));
 	}
-	
-	public List<PerfilResponseDTO> filtroUsuario(FiltroPerfilRequestDTO filtroPerfilRequestDTO,
+
+	public List<UsuarioResponseDTO> filtroUsuario(FiltroPerfilRequestDTO filtroPerfilRequestDTO,
 			PageRequest pageRequest) {
 
 		Usuario usuario = this.modelMapper.map(filtroPerfilRequestDTO, Usuario.class);
@@ -192,8 +192,8 @@ public class UsuarioService implements UserDetailsService {
 		Example<Usuario> example = Example.of(usuario, exampleMatcher);
 
 		Page<Usuario> usuarios = this.repository.findAll(example, pageRequest);
-		return usuarios.stream().map(p -> {
-			return this.modelMapper.map(p, PerfilResponseDTO.class);
+		return usuarios.stream().map(user -> {
+			return this.modelMapper.map(user, UsuarioResponseDTO.class);
 		}).collect(Collectors.toList());
 	}
 
