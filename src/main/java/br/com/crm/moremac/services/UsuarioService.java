@@ -1,8 +1,12 @@
 package br.com.crm.moremac.services;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -16,13 +20,17 @@ import com.auth0.jwt.exceptions.TokenExpiredException;
 
 import br.com.crm.moremac.config.email.EnviaEmail;
 import br.com.crm.moremac.config.jwt.JWTConstants;
+import br.com.crm.moremac.entities.Perfil;
 import br.com.crm.moremac.entities.Usuario;
+import br.com.crm.moremac.enuns.Status;
 import br.com.crm.moremac.handlers.BadRequestException;
 import br.com.crm.moremac.handlers.ObjetoNotFoundException;
 import br.com.crm.moremac.repositories.UsuarioRepository;
 import br.com.crm.moremac.requests.LoginRequestDTO;
 import br.com.crm.moremac.requests.SenhasRequestDTO;
+import br.com.crm.moremac.requests.UsuarioRequestDTO;
 import br.com.crm.moremac.responses.MensagemResponseDTO;
+import br.com.crm.moremac.responses.UsuarioResponseDTO;
 
 @Service
 public class UsuarioService implements UserDetailsService {
@@ -33,10 +41,17 @@ public class UsuarioService implements UserDetailsService {
 
 	private final EnviaEmail email;
 
-	public UsuarioService(UsuarioRepository repository, PasswordEncoder passwordEncod, EnviaEmail email) {
+	private final PerfilService perfilService;
+
+	private final ModelMapper modelMapper;
+
+	public UsuarioService(UsuarioRepository repository, PasswordEncoder passwordEncod, EnviaEmail email,
+			PerfilService perfilService, ModelMapper modelMapper) {
 		this.repository = repository;
 		this.passwordEncod = passwordEncod;
 		this.email = email;
+		this.perfilService = perfilService;
+		this.modelMapper = modelMapper;
 	}
 
 	public Usuario buscarUsuarioPeloLogin(String username) {
@@ -92,6 +107,73 @@ public class UsuarioService implements UserDetailsService {
 		} catch (TokenExpiredException e) {
 			throw new TokenExpiredException("Token expirado: " + e.getMessage());
 		}
+	}
+
+	public UsuarioResponseDTO save(UsuarioRequestDTO usuarioRequestDTO) {
+		this.repository.findByLogin(usuarioRequestDTO.getLogin()).ifPresent(usuario -> {
+			throw new BadRequestException("Usuário já cadastrado.");
+		});
+
+		Perfil perfil = this.perfilService.buscarPerfilPeloId(usuarioRequestDTO.getIdPerfil());
+		String passowrdEncrypted = passwordEncod.encode(usuarioRequestDTO.getPassword());
+		usuarioRequestDTO.setPassword(passowrdEncrypted);
+		Usuario usuario = this.modelMapper.map(usuarioRequestDTO, Usuario.class);
+		usuario.setStatus(Status.ATIVO);
+		usuario.setPerfil(perfil);
+		usuario = this.repository.save(usuario);
+		return this.modelMapper.map(usuario, UsuarioResponseDTO.class);
+	}
+
+	public List<UsuarioResponseDTO> buscarTodos(PageRequest pageRequest) {
+		return this.repository.findAll(pageRequest).stream().map(usuario -> {
+			return this.modelMapper.map(usuario, UsuarioResponseDTO.class);
+		}).collect(Collectors.toList());
+	}
+
+	public UsuarioResponseDTO buscarPeloId(Long id) {
+		return this.repository.findById(id).map(usuario -> {
+			return modelMapper.map(usuario, UsuarioResponseDTO.class);
+		}).orElseThrow(() -> new ObjetoNotFoundException("Usuário não encontrado."));
+	}
+
+	public UsuarioResponseDTO atualizar(Long id, UsuarioRequestDTO usuarioRequestDTO) {
+		return this.repository.findById(id).map(usuario -> {
+
+			if (!usuario.getLogin().equals(usuarioRequestDTO.getLogin())) {
+				this.repository.findByLogin(usuarioRequestDTO.getLogin()).ifPresent(user -> {
+					throw new BadRequestException("Usuário já cadastrado.");
+				});
+			}
+
+			Perfil perfil = this.perfilService.buscarPerfilPeloId(usuarioRequestDTO.getIdPerfil());
+			String passowrdEncrypted = passwordEncod.encode(usuarioRequestDTO.getPassword());
+			usuarioRequestDTO.setPassword(passowrdEncrypted);
+			usuarioRequestDTO.setId(usuario.getId());
+			usuario = this.modelMapper.map(usuarioRequestDTO, Usuario.class);
+			usuario.setStatus(Status.buscarStatus(usuarioRequestDTO.getStatus()));
+			usuario.setPerfil(perfil);
+			usuario = this.repository.save(usuario);
+			return this.modelMapper.map(usuario, UsuarioResponseDTO.class);
+		}).orElseThrow(() -> new ObjetoNotFoundException("Usuário não encontrado."));
+	}
+
+	public MensagemResponseDTO ativarEInativar(Long id) {
+		return this.repository.findById(id).map(usuario -> {
+			Status status;
+			if (usuario.getStatus().equals(Status.ATIVO)) {
+				status = Status.INATIVO;
+			} else {
+				status = Status.ATIVO;
+			}
+			usuario.setStatus(status);
+			this.repository.save(usuario);
+			return MensagemResponseDTO.getMenssagem("Status alterado para " + status + " com sucesso.");
+		}).orElseThrow(() -> new ObjetoNotFoundException("Usuário não encontrado."));
+	}
+
+	public Usuario buscarUsuarioPeloId(Long idUsuario) {
+		return this.repository.findById(idUsuario)
+				.orElseThrow(() -> new ObjetoNotFoundException("Usuário não encontrado."));
 	}
 
 }
