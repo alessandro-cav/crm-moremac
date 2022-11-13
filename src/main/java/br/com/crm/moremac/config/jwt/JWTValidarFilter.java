@@ -16,17 +16,10 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 
-import br.com.crm.moremac.entities.Usuario;
-import br.com.crm.moremac.responses.AutenticacaoResponseDTO;
-import br.com.crm.moremac.services.UsuarioService;
-
 public class JWTValidarFilter extends BasicAuthenticationFilter {
 
-	private UsuarioService service;
-
-	public JWTValidarFilter(AuthenticationManager authenticationManager, UsuarioService service) {
+	public JWTValidarFilter(AuthenticationManager authenticationManager) {
 		super(authenticationManager);
-		this.service = service;
 	}
 
 	@Override
