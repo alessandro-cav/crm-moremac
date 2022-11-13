@@ -6,7 +6,11 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.ExampleMatcher.StringMatcher;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -26,10 +30,12 @@ import br.com.crm.moremac.enuns.Status;
 import br.com.crm.moremac.handlers.BadRequestException;
 import br.com.crm.moremac.handlers.ObjetoNotFoundException;
 import br.com.crm.moremac.repositories.UsuarioRepository;
+import br.com.crm.moremac.requests.FiltroPerfilRequestDTO;
 import br.com.crm.moremac.requests.LoginRequestDTO;
 import br.com.crm.moremac.requests.SenhasRequestDTO;
 import br.com.crm.moremac.requests.UsuarioRequestDTO;
 import br.com.crm.moremac.responses.MensagemResponseDTO;
+import br.com.crm.moremac.responses.PerfilResponseDTO;
 import br.com.crm.moremac.responses.UsuarioResponseDTO;
 
 @Service
@@ -174,6 +180,21 @@ public class UsuarioService implements UserDetailsService {
 	public Usuario buscarUsuarioPeloId(Long idUsuario) {
 		return this.repository.findById(idUsuario)
 				.orElseThrow(() -> new ObjetoNotFoundException("Usuário não encontrado."));
+	}
+	
+	public List<PerfilResponseDTO> filtroUsuario(FiltroPerfilRequestDTO filtroPerfilRequestDTO,
+			PageRequest pageRequest) {
+
+		Usuario usuario = this.modelMapper.map(filtroPerfilRequestDTO, Usuario.class);
+
+		ExampleMatcher exampleMatcher = ExampleMatcher.matching().withIgnoreCase()
+				.withStringMatcher(StringMatcher.CONTAINING);
+		Example<Usuario> example = Example.of(usuario, exampleMatcher);
+
+		Page<Usuario> usuarios = this.repository.findAll(example, pageRequest);
+		return usuarios.stream().map(p -> {
+			return this.modelMapper.map(p, PerfilResponseDTO.class);
+		}).collect(Collectors.toList());
 	}
 
 }
