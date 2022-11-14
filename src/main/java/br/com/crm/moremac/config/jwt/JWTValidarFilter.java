@@ -41,6 +41,8 @@ public class JWTValidarFilter extends BasicAuthenticationFilter {
 		chain.doFilter(request, response);
 	}
 
+
+
 	private UsernamePasswordAuthenticationToken getAuthenticationToken(String token) {
 		String usuario = JWT.require(Algorithm.HMAC512(JWTConstants.CHAVE_ASSINATURA)).build().verify(token)
 				.getSubject();

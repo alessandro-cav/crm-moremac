@@ -21,9 +21,11 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.crm.moremac.requests.FiltroUsuarioRequestDTO;
 import br.com.crm.moremac.requests.LoginRequestDTO;
 import br.com.crm.moremac.requests.SenhasRequestDTO;
+import br.com.crm.moremac.requests.UsuarioPasswordRequestDTO;
 import br.com.crm.moremac.requests.UsuarioRequestDTO;
 import br.com.crm.moremac.responses.MensagemResponseDTO;
 import br.com.crm.moremac.responses.UsuarioResponseDTO;
+import br.com.crm.moremac.responses.UsuarioTokenResponseDTO;
 import br.com.crm.moremac.services.UsuarioService;
 
 @RestController
@@ -83,5 +85,12 @@ public class UsuarioController {
 		return ResponseEntity.ok(this.service.filtroUsuario(filtroUsuarioRequestDTO,
 				PageRequest.of(pagina, quantidade, Sort.by(Direction.valueOf(ordem), ordenarPor))));
 	}
+	
+	@PostMapping("/login")
+	public ResponseEntity<UsuarioTokenResponseDTO> gerarTokenPeloUsuarioESenha(
+			@RequestBody @Valid UsuarioPasswordRequestDTO usuarioPasswordRequestDTO) {
+		return ResponseEntity.ok(this.service.gerarTokenPeloUsuarioESenha(usuarioPasswordRequestDTO));
+	}
+
 
 }

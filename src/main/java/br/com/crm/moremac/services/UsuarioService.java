@@ -33,9 +33,12 @@ import br.com.crm.moremac.repositories.UsuarioRepository;
 import br.com.crm.moremac.requests.FiltroUsuarioRequestDTO;
 import br.com.crm.moremac.requests.LoginRequestDTO;
 import br.com.crm.moremac.requests.SenhasRequestDTO;
+import br.com.crm.moremac.requests.UsuarioPasswordRequestDTO;
 import br.com.crm.moremac.requests.UsuarioRequestDTO;
 import br.com.crm.moremac.responses.MensagemResponseDTO;
+import br.com.crm.moremac.responses.PerfilResponseDTO;
 import br.com.crm.moremac.responses.UsuarioResponseDTO;
+import br.com.crm.moremac.responses.UsuarioTokenResponseDTO;
 
 @Service
 public class UsuarioService implements UserDetailsService {
@@ -194,5 +197,41 @@ public class UsuarioService implements UserDetailsService {
 			return this.modelMapper.map(user, UsuarioResponseDTO.class);
 		}).collect(Collectors.toList());
 	}
+
+	public UsuarioTokenResponseDTO gerarTokenPeloUsuarioESenha(UsuarioPasswordRequestDTO usuarioPasswordRequestDTO) {
+
+		return this.repository.findByLogin(usuarioPasswordRequestDTO.getLogin()).map(usuario -> {
+
+			boolean validarSenha = passwordEncod.matches(usuarioPasswordRequestDTO.getPassword(),
+					usuario.getPassword());
+
+			if (!validarSenha) {
+				throw new BadRequestException("Senha invalida");
+			}
+
+			String token = JWT.create().withSubject(usuario.getLogin())
+					.withExpiresAt(new Date(System.currentTimeMillis() + JWTConstants.TOKEN_EXPIRADO))
+					.sign(Algorithm.HMAC512(JWTConstants.CHAVE_ASSINATURA));
+
+			UsuarioResponseDTO usuarioResposta = new UsuarioResponseDTO();
+			usuarioResposta.setId(usuario.getId());
+			usuarioResposta.setLogin(usuario.getLogin());
+			usuarioResposta.setStatus(usuario.getStatus());
+
+			PerfilResponseDTO perfilResponseDTO = new PerfilResponseDTO();
+			perfilResponseDTO.setId(usuario.getPerfil().getId());
+			perfilResponseDTO.setNome(usuario.getPerfil().getNome());
+			usuarioResposta.setPerfil(perfilResponseDTO);
+
+			UsuarioTokenResponseDTO tokenResponseDTO = new UsuarioTokenResponseDTO();
+			tokenResponseDTO.setUsuario(usuarioResposta);
+			tokenResponseDTO.setToken(token);
+
+			return tokenResponseDTO;
+
+		}).orElseThrow(() -> new ObjetoNotFoundException("Usuário não encontrado."));
+
+	}
+
 
 }
