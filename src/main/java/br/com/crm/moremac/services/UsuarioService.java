@@ -30,7 +30,7 @@ import br.com.crm.moremac.enuns.Status;
 import br.com.crm.moremac.handlers.BadRequestException;
 import br.com.crm.moremac.handlers.ObjetoNotFoundException;
 import br.com.crm.moremac.repositories.UsuarioRepository;
-import br.com.crm.moremac.requests.FiltroPerfilRequestDTO;
+import br.com.crm.moremac.requests.FiltroUsuarioRequestDTO;
 import br.com.crm.moremac.requests.LoginRequestDTO;
 import br.com.crm.moremac.requests.SenhasRequestDTO;
 import br.com.crm.moremac.requests.UsuarioRequestDTO;
@@ -181,11 +181,10 @@ public class UsuarioService implements UserDetailsService {
 				.orElseThrow(() -> new ObjetoNotFoundException("Usuário não encontrado."));
 	}
 
-	public List<UsuarioResponseDTO> filtroUsuario(FiltroPerfilRequestDTO filtroPerfilRequestDTO,
+	public List<UsuarioResponseDTO> filtroUsuario(FiltroUsuarioRequestDTO filtroUsuarioRequestDTO,
 			PageRequest pageRequest) {
 
-		Usuario usuario = this.modelMapper.map(filtroPerfilRequestDTO, Usuario.class);
-
+		Usuario usuario = this.modelMapper.map(filtroUsuarioRequestDTO, Usuario.class);		
 		ExampleMatcher exampleMatcher = ExampleMatcher.matching().withIgnoreCase()
 				.withStringMatcher(StringMatcher.CONTAINING);
 		Example<Usuario> example = Example.of(usuario, exampleMatcher);

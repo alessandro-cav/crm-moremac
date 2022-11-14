@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.crm.moremac.requests.FiltroUsuarioRequestDTO;
 import br.com.crm.moremac.requests.LoginRequestDTO;
 import br.com.crm.moremac.requests.SenhasRequestDTO;
 import br.com.crm.moremac.requests.UsuarioRequestDTO;
@@ -74,19 +75,13 @@ public class UsuarioController {
 	public ResponseEntity<MensagemResponseDTO> ativarEInativar(@PathVariable(name = "id") Long id) {
 		return ResponseEntity.ok(this.service.ativarEInativar(id));
 	}
-	
-	/*
-	 * @PostMapping("/filtro") public ResponseEntity<List<UsuarioResponseDTO>>
-	 * filtroUsuario(
-	 * 
-	 * @RequestBody FiltroRequestDTO filtroPerfilRequestDTO, @RequestParam Integer
-	 * pagina,
-	 * 
-	 * @RequestParam Integer quantidade, @RequestParam String ordem, @RequestParam
-	 * String ordenarPor) { return
-	 * ResponseEntity.ok(this.service.filtroUsuario(filtroPerfilRequestDTO,
-	 * PageRequest.of(pagina, quantidade, Sort.by(Direction.valueOf(ordem),
-	 * ordenarPor)))); }
-	 */
+
+	@PostMapping("/filtro")
+	public ResponseEntity<List<UsuarioResponseDTO>> filtroUsuario(
+			@RequestBody FiltroUsuarioRequestDTO filtroUsuarioRequestDTO, @RequestParam Integer pagina,
+			@RequestParam Integer quantidade, @RequestParam String ordem, @RequestParam String ordenarPor) {
+		return ResponseEntity.ok(this.service.filtroUsuario(filtroUsuarioRequestDTO,
+				PageRequest.of(pagina, quantidade, Sort.by(Direction.valueOf(ordem), ordenarPor))));
+	}
 
 }
