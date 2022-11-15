@@ -30,9 +30,9 @@ import br.com.crm.moremac.services.UsuarioService;
 
 public class JWTAutenticarFilter extends UsernamePasswordAuthenticationFilter {
 
-	private AuthenticationManager authenticationManager;
+	private final AuthenticationManager authenticationManager;
 
-	private UsuarioService service;
+	private final UsuarioService service;
 
 	public JWTAutenticarFilter(AuthenticationManager authenticationManager, UsuarioService service) {
 		this.authenticationManager = authenticationManager;

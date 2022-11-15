@@ -21,7 +21,7 @@ import br.com.crm.moremac.services.UsuarioService;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-	private UsuarioService userService;
+	private final UsuarioService userService;
 
 	public SecurityConfig(@Lazy UsuarioService userService) {
 		this.userService = userService;
