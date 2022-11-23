@@ -48,7 +48,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	public void configure(WebSecurity web) throws Exception {
 		web.ignoring().antMatchers("/users/forgot_password*").antMatchers("/users/reset_password*")
-				.antMatchers("/usuarios/login*").antMatchers("/swagger-ui/**", "/v3/api-docs/**");
+				.antMatchers("/usuarios/login*").antMatchers("/swagger-ui/**", "/v3/api-docs/**").antMatchers("http://localhost:4200");
 	}
 
 }
